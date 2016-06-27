@@ -119,7 +119,6 @@ else:
 	print("共查询了 %d 页"%searchedpage)
 
 targetfile.close
-
-
+print("get link over")
 
 		
