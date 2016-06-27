@@ -46,10 +46,10 @@ avinfoall=soup1.find_all("div",{"class":"search-item"})
 
 for avinfo in avinfoall:
 	#取av名字
-	avtitle=avinfo.find("div",class_="item-title")
+	avtitle=avinfo.find("div",class_="item-list")
 	avtitlestr=avtitle.get_text(strip=True) #获得去空格的文字内容
 	avnamelist.append(avtitlestr)
-	#print("name = %s"%avtitlestr)
+	print("name = %s"%avtitlestr)
 	#取av 磁力链接
 	avmag=avinfo.find("a",href=re.compile(r'^(\s)*magnet'))
 	avlink=avmag.get("href")

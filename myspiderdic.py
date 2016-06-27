@@ -40,7 +40,7 @@ def get_magres(input_url):
 		avinfoall =soup1.find_all("div",{"class":"search-item"})
 
 		for avinfo in avinfoall:
-			avtitle=avinfo.find("div",class_="item-title")
+			avtitle=avinfo.find("div",class_="item-list")
 			avtitlestr=avtitle.get_text(strip=True) #获得去空格的文字内容
 			avnamelist.append(avtitlestr)
 			#print("name = %s"%avtitlestr)
