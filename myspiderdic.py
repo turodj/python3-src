@@ -67,16 +67,16 @@ basepath="/Users/dongjian/spiderdoc/"
 finename=basepath+sys.argv[1]+".txt" #第一个参数形成文件名
 targetfile=open(finename,"a")
 
-page=endpage #从尾页开始搜索
+page=beginpage #从开始页开始搜索
 getavlist=[]
 getavmaglist=[]
 avlist=[]
 searchedpage=0
 avdict=OrderedDict()
 #循环搜索每页
-while page >= beginpage :
+while page <= endpage :
 	
-	url="http://www.btmayi.me/search/%s-size-asc-%d"%(sname,page) #搜索第page页
+	url="http://www.btmayi.me/search/%s-size-desc-%d"%(sname,page) #搜索第page页
 	print("begin search %s\n"%url)
 
 	getavlist.clear()
@@ -110,7 +110,7 @@ while page >= beginpage :
 	targetfile.flush() #将缓存内容刷新到文件中
 	
 
-	page -= 1
+	page += 1
 	searchedpage += 1
 
 	print(".......sleep 1 sec......")
