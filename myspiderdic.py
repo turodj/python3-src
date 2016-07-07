@@ -6,7 +6,7 @@ from urllib.request import urlopen
 from urllib.request import urlretrieve
 from bs4 import BeautifulSoup
 from collections import OrderedDict
-import socket,sys
+import socket,sys,os
 import re
 import urllib.request
 import urllib
@@ -53,72 +53,76 @@ def get_magres(input_url):
 		return avnamelist,avlinklist #函数结束，返回av名称，av链接
 
 
-
-#程序正文开始
-#对中文查询条件进行转译
-snametemp=sys.argv[1] #通过参数传递查询条件
-sname=urllib.parse.quote(snametemp) #中文参数标准化编码
-
-beginpage=int(sys.argv[2]) # 开始页数
-endpage=int(sys.argv[3])  #结束页数
-
-#准备好写入的文件
-basepath="/Users/dongjian/spiderdoc/"
-finename=basepath+sys.argv[1]+".txt" #第一个参数形成文件名
-targetfile=open(finename,"a")
-
-page=beginpage #从开始页开始搜索
-getavlist=[]
-getavmaglist=[]
-avlist=[]
-searchedpage=0
-avdict=OrderedDict()
-#循环搜索每页
-while page <= endpage :
+if __name__=='__main__':
+	#程序正文开始
+	#对中文查询条件进行转译
+	snametemp=sys.argv[1] #通过参数传递查询条件
+	sname=urllib.parse.quote(snametemp) #中文参数标准化编码
 	
-	url="http://www.btmayi.me/search/%s-size-desc-%d"%(sname,page) #搜索第page页
-	print("begin search %s\n"%url)
-
-	getavlist.clear()
-	getavmaglist.clear()
-	avlist.clear()
-	avdict.clear()
-
-	getavlist,getavmaglist=get_magres(url) #调用获取资源函数，返回av名称，av链接
-
-	print("avres=%d,avmag=%d"%(len(getavlist),len(getavmaglist)))
-	targetfile.write("\nsearch： url:%s\n\n"%url)
-	#print(getavlist)
-	#print(getavmaglist)
-	#写入每个影片对应的链接
+	beginpage=int(sys.argv[2]) # 开始页数
+	endpage=int(sys.argv[3])  #结束页数
 	
-	avdict=OrderedDict(zip(getavlist,getavmaglist)) #形成有序字典，并同时剃重
-	#写入av及对应的下载链接
-	for key in avdict.keys():
-		targetfile.write("%s|%s\n"%(key,avdict[key]))
+	#准备好写入的文件
+	basepath="/Users/dongjian/spiderdoc/"
+	finename=basepath+sys.argv[1]+".txt" #第一个参数形成文件名
+	targetfile=open(finename,"a")
+	
+	page=beginpage #从开始页开始搜索
+	getavlist=[]
+	getavmaglist=[]
+	avlist=[]
+	searchedpage=0
+	avdict=OrderedDict()
+	#循环搜索每页
+	while page <= endpage :
 		
-	targetfile.write("--------maglink list-------\n")
-	#逐行写入链接，每5行空一行
-	#print("write %d magnet"%len(getavmaglist))
-	avsum=0
-	for key in avdict.keys():
-		targetfile.write("%s\n"%avdict[key])
-		avsum += 1
-		if avsum%5 == 0 :
-			targetfile.write("\n")
+		url="http://www.btany.com/search/%s-size-desc-%d"%(sname,page) #搜索第page页
+		print("begin search %s\n"%url)
 	
-	targetfile.flush() #将缓存内容刷新到文件中
+		getavlist.clear()
+		getavmaglist.clear()
+		avlist.clear()
+		avdict.clear()
 	
-
-	page += 1
-	searchedpage += 1
-
-	print(".......sleep 1 sec......")
-	time.sleep(1) #休眠1秒，防止网站封ip
-else:
-	print("共查询了 %d 页"%searchedpage)
-
-targetfile.close
-print("get link over")
-
+		getavlist,getavmaglist=get_magres(url) #调用获取资源函数，返回av名称，av链接
+	
+		print("avres=%d,avmag=%d"%(len(getavlist),len(getavmaglist)))
+		targetfile.write("\nsearch： url:%s\n\n"%url)
+		#print(getavlist)
+		#print(getavmaglist)
+		#写入每个影片对应的链接
 		
+		avdict=OrderedDict(zip(getavlist,getavmaglist)) #形成有序字典，并同时剃重
+		#写入av及对应的下载链接
+		namesum=0
+		for key in avdict.keys():
+			targetfile.write("%s\n%s\n\n"%(key,avdict[key]))
+			namesum+=1
+			if namesum%5==0:
+				targetfile.write("\n")
+			
+		targetfile.write("--------maglink list-------\n")
+		#逐行写入链接，每5行空一行
+		#print("write %d magnet"%len(getavmaglist))
+		avsum=0
+		for key in avdict.keys():
+			targetfile.write("%s\n"%avdict[key])
+			avsum += 1
+			if avsum%5 == 0 :
+				targetfile.write("\n")
+		
+		targetfile.flush() #将缓存内容刷新到文件中
+		
+	
+		page += 1
+		searchedpage += 1
+	
+		print(".......sleep 1 sec......")
+		time.sleep(1) #休眠1秒，防止网站封ip
+	else:
+		print("共查询了 %d 页"%searchedpage)
+	
+	targetfile.close
+	print("get link over")
+	
+			

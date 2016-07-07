@@ -69,7 +69,7 @@ for key in avdict.keys():
 	avsum+=1
 	if avsum%5 == 0:
 		r2.write("\n")
-
+			
 r1.close()
 r2.close()
 
