@@ -6,3 +6,7 @@
 	f=c.ins_left("six")
 	g=c.ins_right("sev")
 	a.get_size()
+
+	 for i in range(0,8):
+	print(l2[pow(2,i)-1:pow(2,i+1)-1])
+
