@@ -1,12 +1,17 @@
 
+# -*- coding: UTF-8 -*
+#定义了二叉堆的类和方法
+
+
 import socket,sys,os
 import re
 import urllib
 import sys,time
 
+
 class Binpile(object):
 	"""docstring for Binpile"""
-	#二叉堆对象，key是唯一标识，ins_left/right 参数是node还是str需要仔细梳理
+	#二叉堆对象，key是唯一标识
 	#__slots__=("key","left_node","right_node")
 
 	def __init__(self,root):
@@ -22,7 +27,7 @@ class Binpile(object):
 	
 	__repr__ = __str__
 
-	#定义根据key取值
+	#定义根据key取值,返回Binpile节点对象
 	def __getitem__(self,key):
 		stack=[self] #根节点放入列表
 		while stack:
@@ -117,15 +122,40 @@ class Binpile(object):
 				lenth += rtl
 
 		return high,lenth
+	
+	
+	#获取所有keys
+	def show_keys(self):
+		stack=[self] #根节点放入列表
+		keylist=[] #用于返回的序列
+		while stack:
+			current=stack.pop(0)
+			#print(current)
+			keylist.append(current.key) #把获取的节点增加进然后序列
+
+			if current.left_node:
+				stack.append(current.left_node)
+			if current.right_node:
+				stack.append(current.right_node)
+		return keylist
+	
 
 	#根据将序列依次插入二叉堆
-	def bappend(self,nodelist):
-		if isinstance(nodelist,list)==False: #判断入参是否是序列
+	def bappend(self,keylist):
+		if isinstance(keylist,list)==False: #判断入参是否是序列
 			return("input nodelist not list\n")
 		if self==None:#判断根节点是空，返回
 			return("root is none")
+		
+		#判断是否存在重复的key
+		allkeys=self.show_keys()
+		coverkey=set(allkeys)&set(keylist) 
 
-		listres=nodelist.copy()
+		if len(coverkey)!= 0:
+			return("already contain ",coverkey)
+
+		#依次插入到二叉堆中
+		listres=keylist.copy()
 		stack=[self] #根节点放入列表		
 
 		while stack:
@@ -225,6 +255,10 @@ class Binpile(object):
 
 		topnode=self
 		return topnode,leftnewmaster,rightnewmaster
+
+
+
+
 
 
 			
