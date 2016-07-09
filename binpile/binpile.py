@@ -131,7 +131,7 @@ class Binpile(object):
 		while stack:
 			current=stack.pop(0)
 			#print(current)
-			keylist.append(current.key) #把获取的节点增加进然后序列
+			keylist.append(current.key) #把获取的节点key增加进后续序列
 
 			if current.left_node:
 				stack.append(current.left_node)
@@ -200,7 +200,7 @@ class Binpile(object):
 				stack.append(current.right_node)
 		return nodelist
 	
-	#以树形结构展示二叉堆，返回二级链表
+	#以树形结构展示二叉堆，返回二级链表，类型是Binpile
 	def show_delta(self):
 		nodelist=self.show_all()
 		treehigh=self.get_high()
@@ -211,7 +211,16 @@ class Binpile(object):
 			tier.append(templist)
 		return tier
 
-
+	#以树形结构展示key，返回各层次的key列表
+	def show_keydelta(self):
+		keylist=self.show_keys()
+		treehigh=self.get_high()
+		tier=[]
+		templist=[]
+		for i in range(0,treehigh):
+			templist=keylist[pow(2,i)-1:pow(2,i+1)-1]
+			tier.append(templist)
+		return tier
 	
 
 	#根据key值获取节点
@@ -249,9 +258,11 @@ class Binpile(object):
 		
 		leftnewmaster=self.left_node
 		self.left_node=None
+		leftnewmaster.parent=None
 		
 		rightnewmaster=self.right_node
 		self.right_node=None
+		rightnewmaster.parent=None
 
 		topnode=self
 		return topnode,leftnewmaster,rightnewmaster

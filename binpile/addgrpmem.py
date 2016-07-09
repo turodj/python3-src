@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*
 #增加组成员，流程：1判断是是否是客户,是否已经是群成员了 2 是否有活跃组，当前组是否满了，如果满了进行分组操作  3 增加到给定的组中group_member表中 
+#执行方法 python3 addgrpmemt.py <手机号>
 
 
 import socket,sys,os
@@ -86,7 +87,7 @@ def addgrpmem(phone_no): #增加成员到某组
 	
 	iscust(cur,phone_no) #判断是否是客户，如果是获取其cust_id
 	if cur.rowcount!=1 :
-		print(phone_no ,"is not cust")
+		print(phone_no ,"is not cust,or phone is not only")
 		return(False)
 	
 	getdata=cur.fetchone()
@@ -111,11 +112,17 @@ def addgrpmem(phone_no): #增加成员到某组
 			cur.execute("rollback")
 	
 	elif cur.rowcount == 63-1:#如果等于分群条件，一个群最大数量为63人，则分群
-		divgrp()
-	else: #以上都不是，增加到组中，更新组中的父子关系
 		
+		getdata=cur.fetchone()  #取第一行群主记录
+		grp_id=str(getdata[1])
+		cur.execute("start transaction")
+		if divgrp(cur,grp_id) != False:
+			cur.execute("commit")
+		else:
+			cur.execute("rollback")
+	
+	else: #以上都不是，增加到组中，更新组中的父子关系
 		memdata=cur.fetchall() # 获取群组成员
-
 		cur.execute("start transaction")
 		if insmem(cur,memdata,cust_id) != False:
 			cur.execute("commit")
