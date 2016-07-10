@@ -127,27 +127,32 @@ def addgrpmem(phone_no): #增加成员到某组
 		cur.execute("start transaction")
 		if addgrp(cur,cust_id,phone_no) != False:
 			cur.execute("commit")
+			return((True,'1','cre new group sucess'))
 		else:
 			cur.execute("rollback")
+			return((False,'-1','cre new grp faild'))
 	
-	elif cur.rowcount == 63-1:#如果等于分群条件，一个群最大数量为63人，则分群
+	elif cur.rowcount == 63-1:#如果等于分群条件，一个群最大数量为63人，则分群,然后在插入新的群组
 		
 		getdata=cur.fetchone()
 		grp_id=str(getdata[1])
 		cur.execute("start transaction")
 		if divgrp(cur,grp_id) != False:
 			cur.execute("commit")
+			return((True,'2','div grp sucess,now retry add new grp'))
 		else:
 			cur.execute("rollback")
-	
+			return((False,'-2','div grp faild'))
+
 	else: #以上都不是，增加到组中，更新组中的父子关系
 		memdata=cur.fetchall() # 获取群组成员
 		cur.execute("start transaction")
 		if insmem(cur,memdata,cust_id) != False:
 			cur.execute("commit")
+			return((True,'3','add grp sucess'))
 		else:
 			cur.execute("rollback")
-
+			return((False,'-3','add grp faild'))
 
 
 
@@ -158,4 +163,11 @@ if __name__ == "__main__":
 	phone_no=sys.argv[1]
 	print(phone_no)
 	
-	addgrpmem(phone_no)
+	sta,code,content=addgrpmem(phone_no)
+	print(sta,code,content)
+	
+	if sta== True and code == 2: # 分群成功，重新调用addgrpmem添加到新群
+		retcontent=addgrpmem(phone)
+		print(retcontent)
+	
+

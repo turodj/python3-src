@@ -39,3 +39,8 @@ def exeUpdate(cur,sql):#更新语句，可执行update语句
 def connClose(conn,cur):#关闭所有连接
     cur.close();
     conn.close();
+
+def getnowtime():
+    ISOTIMEFORMAT='%Y-%m-%d %X'
+    nowtime=time.strftime( ISOTIMEFORMAT, time.localtime())
+    return(nowtime)
