@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*
-
+#执行方法 python3 addcust.py <姓名> <手机号> <金额>
 
 
 import socket,sys,os
@@ -40,7 +40,7 @@ def connClose(conn,cur):#关闭所有连接
 
 def addcust(cust_name,phone_no,money): #cust_id 自增，不用显性插入
 	conn,cur = connDB()
-	addsql="insert cust_info(cust_name,phone_no,money) values('%s','%s',%d)"%(cust_name,phone_no,int(money)) #输入汉字还是不行，cust_name汉字编码问题需要解决
+	addsql="insert cust_info(cust_name,phone_no,money) values('%s','%s',%d)"%(cust_name,phone_no,int(money)) 
 
 	print(addsql)
 

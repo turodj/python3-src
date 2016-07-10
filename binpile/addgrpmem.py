@@ -11,6 +11,7 @@ import pymysql
 
 
 from binmysql import * #可以应用binmysql.py中的函数
+from readgrpmem import *
 from binpile import Binpile
 
 
@@ -48,8 +49,22 @@ def addgrp(cur,cust_id,phone_no): #创建组，并将cust_id 设为群主，插�
 def divgrp():
 	pass
 
+def updategrand(cur,group_id,node_id):#更新节点上溯祖先的余额
+	grparry=readgrpmem(cur,group_id) #获取二叉树
+	grandlist=grparry.get_grand(str(node_id))  #获取其祖先节点
+	addmoney=200
+	for node in grandlist:
+		updsql="update cust_info set money=money+%d where cust_id = %d"%(addmoney,int(node.key))
+		sta=exeUpdate(cur,updsql)
+		print('update cust_id ',node.key)
+		if sta!=1 :
+			return(False)
+	else:
+		return(True)
 
-def insmem(cur,memdata,cust_id): #添加成员记录，添加父子关系，先left键，后right建
+	
+
+def insmem(cur,memdata,cust_id): #添加成员记录，添加父子关系，先left键，后right建,触发更新其所有祖先的金额
 
 	for record in memdata:#循环变量取得的记录
 		seq,group_id,node_id,parent_id,left_flag,right_flag=record # 将元组记录中的各个字段赋给变量
@@ -80,6 +95,10 @@ def insmem(cur,memdata,cust_id): #添加成员记录，添加父子关系，先l
 	if sta!=1:
 		return(False)
 
+	# 更新此新增节点所有祖先的金额
+	if updategrand(cur,group_id,cust_id) == False:
+		return(False)
+	
 
 
 def addgrpmem(phone_no): #增加成员到某组
@@ -113,7 +132,7 @@ def addgrpmem(phone_no): #增加成员到某组
 	
 	elif cur.rowcount == 63-1:#如果等于分群条件，一个群最大数量为63人，则分群
 		
-		getdata=cur.fetchone()  #取第一行群主记录
+		getdata=cur.fetchone()
 		grp_id=str(getdata[1])
 		cur.execute("start transaction")
 		if divgrp(cur,grp_id) != False:
