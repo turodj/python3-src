@@ -13,6 +13,7 @@ import pymysql
 from binmysql import * #可以应用binmysql.py中的函数
 from readgrpmem import *
 from binpile import Binpile
+from divgrp import *
 
 
 def iscust(cur,phone_no): #判断是否是客户
@@ -46,8 +47,7 @@ def addgrp(cur,cust_id,phone_no): #创建组，并将cust_id 设为群主，插�
 	if sta!=1:
 		return(False)
 
-def divgrp():
-	pass
+
 
 def updategrand(cur,group_id,node_id):#更新节点上溯祖先的余额
 	grparry=readgrpmem(cur,group_id) #获取二叉树
@@ -107,7 +107,7 @@ def addgrpmem(phone_no): #增加成员到某组
 	iscust(cur,phone_no) #判断是否是客户，如果是获取其cust_id
 	if cur.rowcount!=1 :
 		print(phone_no ,"is not cust,or phone is not only")
-		return(False)
+		return(False,'-4','is not cust,or phone is not only')
 	
 	getdata=cur.fetchone()
 	cust_id=getdata[0]
@@ -117,7 +117,7 @@ def addgrpmem(phone_no): #增加成员到某组
 	
 	if cur.rowcount!=0 :
 		print(phone_no,cust_id ,"already is member ")
-		return(False)
+		return(False,'-5','already is member')
 
 	getmem(cur) #获取当前活跃群组，返回结果集。分3钟情况 1.记录数0，说明没有活跃群，创建群组，并插入群成员中；2.记录数》max最大成员数 分群 3.<小于最大成员数，添加记录，更新父子关系
 	
